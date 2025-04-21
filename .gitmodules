@@ -1,0 +1,9 @@
+[submodule "anime-saas-api"]
+	path = anime-saas-api
+	url = https://github.com/StephenGodard/anime-saas-api.git
+[submodule "anime-saas-front"]
+	path = anime-saas-front
+	url = https://github.com/StephenGodard/anime-saas-front.git
+[submodule "anime-saas-mlservice"]
+	path = anime-saas-mlservice
+	url = https://github.com/StephenGodard/anime-saas-mlservice.git

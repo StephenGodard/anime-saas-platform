@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  anime-saas-front:
+    build:
+      context: ./anime-saas-front
+    container_name: anime-saas-front
+    ports:
+      - "3000:80"  # Serveur Nginx statique
+    depends_on:
+      - anime-saas-api
+
+  anime-saas-api:
+    build:
+      context: ./anime-saas-api
+    container_name: anime-saas-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=anime-saas-mysql;Port=3306;Database=anime_saas_db;User=animeuser;Password=animepass
+    depends_on:
+      - anime-saas-mysql
+
+  anime-saas-mlservice:
+    build:
+      context: ./anime-saas-mlservice
+    container_name: anime-saas-mlservice
+    ports:
+      - "5000:5000"
+    depends_on:
+      - anime-saas-mysql
+
+  anime-saas-mysql:
+    image: mysql:8
+    container_name: anime-saas-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: anime_saas_db
+      MYSQL_USER: animeuser
+      MYSQL_PASSWORD: animepass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
