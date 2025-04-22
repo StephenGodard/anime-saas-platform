@@ -28,7 +28,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - ConnectionStrings__DefaultConnection=Server=anime-saas-mysql;Port=3306;Database=anime_saas_db;User=animeuser;Password=animepass
+      - ConnectionStrings__DefaultConnection=Server=anime-saas-mysql;Port=3306;Database=anime_saas_db;User=${API_USER};Password=${API_USER_PASSWORD}
     depends_on:
       - anime-saas-mysql
 
@@ -56,6 +56,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
 
 volumes:
