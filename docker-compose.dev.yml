@@ -27,8 +27,11 @@ services:
       - ./anime-saas-api/AnimeSaasApi:/src
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
-      - ConnectionStrings__DefaultConnection=Server=anime-saas-mysql;Port=3306;Database=anime_saas_db;User=${API_USER};Password=${API_USER_PASSWORD}
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=${DB_HOST};Database=${DB_NAME};User Id=${API_USER};Password=${API_USER_PASSWORD};
     depends_on:
       - anime-saas-mysql
 

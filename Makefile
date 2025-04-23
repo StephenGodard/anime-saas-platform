@@ -3,6 +3,8 @@ dev:
 
 prod:
 	docker-compose -f docker-compose.prod.yml up --build
+test:
+	docker-compose -f docker-compose.test.yml up --build
 
 down:
 	docker-compose down
@@ -13,3 +15,6 @@ clean:
 
 ps:
 	docker-compose ps
+
+update-submodules:
+	git submodule update --remote --recursive

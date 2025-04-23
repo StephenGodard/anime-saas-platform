@@ -16,10 +16,15 @@ services:
     container_name: anime-saas-api
     ports:
       - "8080:8080"
+    env_file:
+      - .env
     environment:
-      - ConnectionStrings__DefaultConnection=Server=anime-saas-mysql;Port=3306;Database=anime_saas_db;User=${API_USER};Password=${API_USER_PASSWORD};
+      - ASPNETCORE_ENVIRONMENT=Production
+      - DOTNET_RUNNING_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Server=${DB_HOST};Database=${DB_NAME};User Id=${API_USER};Password=${API_USER_PASSWORD};
     depends_on:
       - anime-saas-mysql
+
 
   anime-saas-mlservice:
     build:
@@ -34,6 +39,8 @@ services:
     image: mysql:8
     container_name: anime-saas-mysql
     restart: always
+    env_file:
+      - .env
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: anime_saas_db

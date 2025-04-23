@@ -6,7 +6,7 @@ using AnimeSaasApi.Context;
 using System.Linq;
 
 
-namespace AnimeSaasApi.Tests.Factory
+namespace anime_saas_api.Tests.Factory
 {
     public class AnimeWebApplicationFactory : WebApplicationFactory<AnimeSaasApi.Program>
     {
