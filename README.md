@@ -11,14 +11,25 @@ Le projet est découpé en **plusieurs microservices** :
 
 | Service | Description |
 |:---|:---|
-| **anime-saas-api** | API backend développée en **.NET 9** pour la gestion des données utilisateur, des animes et de la watchlist. |
-| **anime-saas-front** | Frontend développé avec **Nuxt 3** pour l'affichage des recommandations, de la watchlist et des calendrier de sortie |
+| **anime-saas-api** | API backend développée en **.NET 9** pour la gestion des données utilisateur, des animes, de la watchlist et des préférences. |
+| **anime-saas-front** | Frontend développé avec **Nuxt 3** pour l'affichage des recommandations, de la watchlist et du calendrier de sortie des animes. |
 | **anime-saas-mlservice** | Service de **Machine Learning Python** (FastAPI) générant les recommandations personnalisées. |
-| **MySQL** | Base de données pour stocker les utilisateurs, watchlists, animes, etc.
+| **anime-saas-agent** | Microservice Python autonome chargé de collecter et enrichir automatiquement les données d'animes (depuis MyAnimeList et d'autres sources). |
+| **MySQL** | Base de données relationnelle stockant les utilisateurs, animes, préférences, interactions et watchlists. |
 
 L'infrastructure est entièrement **dockerisée** pour simplifier le développement, les tests et le déploiement 🚀.
 
 ---
+
+## 🗺️  Schéma d'architecture
+
+Voici l'architecture complète du projet
+![Schéma d'architecture](assets/img/Architecture.png)
+
+## 📖 Documentation du projet
+
+La documentation complète est disponible ici :  
+👉 [Consulter sur Notion](https://tattered-letter-62f.notion.site/Anime-SaaS-Platforme-1bb32705124c8056bc3ff23392ebcf20)
 
 ## 🛠️ Démarrage rapide
 
@@ -52,6 +63,7 @@ make down
 | `/anime-saas-api/` | Backend API (submodule Git) |
 | `/anime-saas-front/` | Frontend Nuxt 3 (submodule Git) |
 | `/anime-saas-mlservice/` | Service ML Python (submodule Git) |
+| `/anime-saas-agent/` | Agent IA Python (submodule Git) |
 | `docker-compose.dev.yml` | Orchestration Docker pour l'environnement **Développement** |
 | `docker-compose.prod.yml` | Orchestration Docker pour l'environnement **Production** |
 | `Makefile` | Automatisation des commandes courantes |
@@ -64,6 +76,7 @@ make down
 - Frontend ➔ **Nuxt 3** (Node.js)
 - Backend ➔ **.NET 9 API Web**
 - Machine Learning ➔ **Python + FastAPI**
+- Agent IA ➔ **Python** (microservice autonome de scraping et enrichissement de données)
 - Base de données ➔ **MySQL 8**
 - Infrastructure ➔ **Docker + Docker Compose**
 
@@ -100,19 +113,18 @@ git submodule update --remote
 
 ---
 
-## 🎯 Objectif du projet
-
-Construire une plateforme SaaS **moderne, évolutive et performante**, en utilisant des bonnes pratiques de microservices, CI/CD, et design scalable.
-
----
-
 ## 🧹 TODO
 
-- Mise en place de CI/CD GitHub Actions
-- Sécurisation des communications interservices
-- Optimisation de la base de données
-- Ajout de monitoring (Grafana / Prometheus)
-- Déploiement cloud (Azure ou AWS)
+- ✅ Finaliser le back-end en fonction des contraintes UX (modèles, contrôleurs, services)
+- 🧪 Ajouter des tests d’intégration (EF Core InMemory)
+- 🎨 Finaliser les spécifications UX et démarrer les maquettes Figma
+- 🌐 Implémenter le front Nuxt (onboarding, swipe, recommandations)
+- 🧠 Développement du microservice ML avec Scikit-learn
+- 📡 Intégration agent IA pour enrichir les données (MyAnimeList, web scraping)
+- 🔐 Sécuriser l'API avec JWT + OAuth2
+- 🚢 Déployer les services sur VPS + configurer les noms de domaines
+- 📈 Mettre en place la télémétrie (logs, métriques, alertes)
+- 🧼 Préparer la CI/CD GitHub Actions pour build + test + déploiement auto
 
 ---
 
