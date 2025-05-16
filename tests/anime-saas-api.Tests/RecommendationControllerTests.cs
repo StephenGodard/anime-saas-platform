@@ -26,7 +26,6 @@ public class RecommendationControllerTests : IClassFixture<RecommendationWebAppl
 
         db.Recommendations.Add(new Recommendation
         {
-            Id = 1,
             UserId = 1,
             AnimeId = 1,
             Score = 75

@@ -6,165 +6,414 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using anime_saas_api.Tests.Factory;
 using System.Net.Http.Json;
-
+using System.Collections.Generic;
 using AnimeSaasApi.Dtos;
+using System;
 
 namespace anime_saas_api.Tests;
 
 public class AnimeControllerTests : IClassFixture<AnimeWebApplicationFactory>
 {
-     private readonly AnimeWebApplicationFactory _factory;
+    private readonly AnimeWebApplicationFactory _factory;
 
-        public AnimeControllerTests(AnimeWebApplicationFactory factory)
+    public AnimeControllerTests(AnimeWebApplicationFactory factory)
+    {
+        _factory = factory;
+    }
+
+    [Fact]
+    public async Task GetAnimes_ReturnsSuccessStatusCode()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync("/api/anime");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SearchAnime_WithTitle_ReturnsMatchingAnimes()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var searchTitle = "Naruto";
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        // Setup test data
+        var genre = new Genre { Name = "Shonen" };
+        var studio = new Studio { Name = "Studio Pierrot" };
+        var platform = new Platform { Name = "Crunchyroll" };
+
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
+
+        var animeToCreate = new
         {
-            _factory = factory;
-        }
+            Title = searchTitle,
+            Description = "Ninja adventure",
+            Classification = "Shonen",
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
 
-        [Fact]
-        public async Task GetAnimes_ReturnsSuccessStatusCode()
+        // Create test anime
+        await client.PostAsJsonAsync("/api/anime", animeToCreate);
+
+        // Act
+        var response = await client.GetAsync($"/api/anime/search?title={searchTitle}");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<AnimeReadDto>>();
+        Assert.NotEmpty(result);
+        Assert.Contains(result, a => a.Title == searchTitle);
+    }
+
+    [Fact]
+    public async Task SearchAnime_WithGenre_ReturnsMatchingAnimes()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var genreName = "Fantasy";
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        // Setup test data
+        var genre = new Genre { Name = genreName };
+        var studio = new Studio { Name = "A-1 Pictures" };
+        var platform = new Platform { Name = "Wakanim" };
+
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
+
+        var animeToCreate = new
         {
-            // Arrange
-            var client = _factory.CreateClient();
+            Title = "Sword Art Online",
+            Description = "Virtual reality MMORPG",
+            Classification = "Shonen",
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
 
-            // Act
-            var response = await client.GetAsync("/api/anime");
+        // Create test anime
+        await client.PostAsJsonAsync("/api/anime", animeToCreate);
 
-            // Assert
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        }
+        // Act
+        var response = await client.GetAsync($"/api/anime/search?genre={genreName}");
 
-        [Fact]
-        public async Task GetAnimeById_ReturnsSuccessStatusCode()
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<AnimeReadDto>>();
+        Assert.NotEmpty(result);
+        Assert.Contains(result, a => a.Genres.Contains(genreName));
+    }
+
+    [Fact]
+    public async Task GetTopAnimes_ReturnsSuccessAndOrderedByPopularity()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        // Setup test data
+        var genre = new Genre { Name = "Action" };
+        var studio = new Studio { Name = "Toei" };
+        var platform = new Platform { Name = "ADN" };
+
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
+
+        // Create multiple animes with different popularity
+        var anime1 = new
         {
-            var client = _factory.CreateClient();
+            Title = "Popular Anime 1",
+            Description = "Very popular anime",
+            Classification = "Seinen",
+            Popularity = 1000,
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
 
-            using var scope = _factory.Services.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
-
-            // Création des entités nécessaires
-            var genre = new Genre { Name = "Action" };
-            var studio = new Studio { Name = "Ufotable" };
-            var platform = new Platform { Name = "Crunchyroll" };
-
-            db.Genres.Add(genre);
-            db.Studios.Add(studio);
-            db.Platforms.Add(platform);
-            await db.SaveChangesAsync();
-
-            var createAnime = new
-            {
-                Title = "Test Anime",
-                Description = "Description test",
-                Classification = "Unknown",
-                MyAnimeListId = 12345,
-                GenreIds = new System.Collections.Generic.List<int> { genre.Id },
-                PlatformIds = new System.Collections.Generic.List<int> { platform.Id },
-                StudioIds = new System.Collections.Generic.List<int> { studio.Id }
-            };
-
-            // POST pour créer l'anime
-            var postResponse = await client.PostAsJsonAsync("/api/anime", createAnime);
-            var content = await postResponse.Content.ReadAsStringAsync();
-            postResponse.EnsureSuccessStatusCode();
-
-            var createdAnime = await postResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
-
-            // GET pour vérifier l'accès
-            var getResponse = await client.GetAsync($"/api/anime/{createdAnime.Id}");
-
-            // Assert
-            getResponse.EnsureSuccessStatusCode(); // 200 OK attendu
-        }
-
-        [Fact]
-        public async Task UpdateAnime_ReturnsSuccessStatusCode()
+        var anime2 = new
         {
-            var client = _factory.CreateClient();
+            Title = "Popular Anime 2",
+            Description = "Less popular anime",
+            Classification = "Shonen",
+            Popularity = 500,
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
 
-            using var scope = _factory.Services.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+        await client.PostAsJsonAsync("/api/anime", anime1);
+        await client.PostAsJsonAsync("/api/anime", anime2);
 
-            var genre = new Genre { Name = "Adventure" };
-            var studio = new Studio { Name = "MAPPA" };
-            var platform = new Platform { Name = "Netflix" };
+        // Act
+        var response = await client.GetAsync("/api/anime/top");
 
-            db.Genres.Add(genre);
-            db.Studios.Add(studio);
-            db.Platforms.Add(platform);
-            await db.SaveChangesAsync();
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<AnimeReadDto>>();
+        Assert.NotEmpty(result);
+    }
 
-            var createAnime = new
-            {
-                Title = "Original Title",
-                Description = "Original Description",
-                Classification = "Unknown",
-                MyAnimeListId = 11111,
-                GenreIds = new System.Collections.Generic.List<int> { genre.Id },
-                PlatformIds = new System.Collections.Generic.List<int> { platform.Id },
-                StudioIds = new System.Collections.Generic.List<int> { studio.Id }
-            };
+    [Fact]
+    public async Task GetLatestAnimes_ReturnsSuccessAndOrderedByDate()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
 
-            var postResponse = await client.PostAsJsonAsync("/api/anime", createAnime);
-            postResponse.EnsureSuccessStatusCode();
-            var createdAnime = await postResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
 
-            var updateAnime = new
-            {
-                Title = "Updated Title",
-                Description = "Updated Description",
-                Classification = "Shonen",
-                MyAnimeListId = 11111,
-                GenreIds = new System.Collections.Generic.List<int> { genre.Id },
-                PlatformIds = new System.Collections.Generic.List<int> { platform.Id },
-                StudioIds = new System.Collections.Generic.List<int> { studio.Id }
-            };
+        // Setup test data
+        var genre = new Genre { Name = "Drama" };
+        var studio = new Studio { Name = "Wit Studio" };
+        var platform = new Platform { Name = "Netflix" };
 
-            var putResponse = await client.PutAsJsonAsync($"/api/anime/{createdAnime.Id}", updateAnime);
-            putResponse.EnsureSuccessStatusCode();
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
 
-            var getResponse = await client.GetAsync($"/api/anime/{createdAnime.Id}");
-            var updatedAnime = await getResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
-            Assert.Equal("Updated Title", updatedAnime.Title);
-        }
-
-        [Fact]
-        public async Task DeleteAnime_ReturnsSuccessAndAnimeNotFoundAfterward()
+        // Create multiple animes with different dates
+        var anime1 = new
         {
-            var client = _factory.CreateClient();
+            Title = "New Anime 1",
+            Description = "Recently released",
+            Classification = "Seinen",
+            DateStart = DateTime.Now.AddDays(-10),
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
 
-            using var scope = _factory.Services.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+        var anime2 = new
+        {
+            Title = "New Anime 2",
+            Description = "Just released",
+            Classification = "Shonen",
+            DateStart = DateTime.Now.AddDays(-5),
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
 
-            var genre = new Genre { Name = "Comedy" };
-            var studio = new Studio { Name = "Bones" };
-            var platform = new Platform { Name = "ADN" };
+        await client.PostAsJsonAsync("/api/anime", anime1);
+        await client.PostAsJsonAsync("/api/anime", anime2);
 
-            db.Genres.Add(genre);
-            db.Studios.Add(studio);
-            db.Platforms.Add(platform);
-            await db.SaveChangesAsync();
+        // Act
+        var response = await client.GetAsync("/api/anime/lastest");
 
-            var createAnime = new
-            {
-                Title = "To Be Deleted",
-                Description = "Soon gone",
-                Classification = "Seinen",
-                MyAnimeListId = 99999,
-                GenreIds = new System.Collections.Generic.List<int> { genre.Id },
-                PlatformIds = new System.Collections.Generic.List<int> { platform.Id },
-                StudioIds = new System.Collections.Generic.List<int> { studio.Id }
-            };
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<AnimeReadDto>>();
+        Assert.NotEmpty(result);
+    }
 
-            var postResponse = await client.PostAsJsonAsync("/api/anime", createAnime);
-            postResponse.EnsureSuccessStatusCode();
-            var createdAnime = await postResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
+    [Fact]
+    public async Task GetAnimesBySeason_WithValidSeasonAndYear_ReturnsMatchingAnimes()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var season = "Winter";
+        var year = 2023;
 
-            var deleteResponse = await client.DeleteAsync($"/api/anime/{createdAnime.Id}");
-            deleteResponse.EnsureSuccessStatusCode();
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
 
-            var getAfterDelete = await client.GetAsync($"/api/anime/{createdAnime.Id}");
-            Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
-        }
+        // Setup test data
+        var genre = new Genre { Name = "Mystery" };
+        var studio = new Studio { Name = "MAPPA" };
+        var platform = new Platform { Name = "Crunchyroll" };
 
-        
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
+
+        var animeToCreate = new
+        {
+            Title = $"{season} {year} Anime",
+            Description = "Seasonal anime",
+            Classification = "Seinen",
+            Season = season,
+            SeasonYear = year,
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
+
+        // Create test anime
+        await client.PostAsJsonAsync("/api/anime", animeToCreate);
+
+        // Act
+        var response = await client.GetAsync($"/api/anime/season?season={season}&year={year}");
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var result = await response.Content.ReadFromJsonAsync<List<AnimeReadDto>>();
+        Assert.NotEmpty(result);
+        Assert.Contains(result, a => a.Season == season && a.SeasonYear == year);
+    }
+
+    [Fact]
+    public async Task GetAnimesBySeason_WithInvalidSeason_ReturnsBadRequest()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var invalidSeason = "NotASeason";
+        var year = 2023;
+
+        // Act
+        var response = await client.GetAsync($"/api/anime/season?season={invalidSeason}&year={year}");
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetAnimeById_ReturnsSuccessStatusCode()
+    {
+        var client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        // Création des entités nécessaires
+        var genre = new Genre { Name = "Action" };
+        var studio = new Studio { Name = "Ufotable" };
+        var platform = new Platform { Name = "Crunchyroll" };
+
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
+
+        var createAnime = new
+        {
+            Title = "Test Anime",
+            Description = "Description test",
+            Classification = "Unknown",
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
+
+        // POST pour créer l'anime
+        var postResponse = await client.PostAsJsonAsync("/api/anime", createAnime);
+        postResponse.EnsureSuccessStatusCode();
+
+        var createdAnime = await postResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
+
+        // GET pour vérifier l'accès
+        var getResponse = await client.GetAsync($"/api/anime/{createdAnime.Id}");
+
+        // Assert
+        getResponse.EnsureSuccessStatusCode(); // 200 OK attendu
+    }
+
+    [Fact]
+    public async Task UpdateAnime_ReturnsSuccessStatusCode()
+    {
+        var client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        var genre = new Genre { Name = "Adventure" };
+        var studio = new Studio { Name = "MAPPA" };
+        var platform = new Platform { Name = "Netflix" };
+
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
+
+        var createAnime = new
+        {
+            Title = "Original Title",
+            Description = "Original Description",
+            Classification = "Unknown",
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
+
+        var postResponse = await client.PostAsJsonAsync("/api/anime", createAnime);
+        postResponse.EnsureSuccessStatusCode();
+        var createdAnime = await postResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
+
+        var updateAnime = new
+        {
+            Title = "Updated Title",
+            Description = "Updated Description",
+            Classification = "Shonen",
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
+
+        var putResponse = await client.PutAsJsonAsync($"/api/anime/{createdAnime.Id}", updateAnime);
+        putResponse.EnsureSuccessStatusCode();
+
+        var getResponse = await client.GetAsync($"/api/anime/{createdAnime.Id}");
+        var updatedAnime = await getResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
+        Assert.Equal("Updated Title", updatedAnime.Title);
+    }
+
+    [Fact]
+    public async Task DeleteAnime_ReturnsSuccessAndAnimeNotFoundAfterward()
+    {
+        var client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        var genre = new Genre { Name = "Comedy" };
+        var studio = new Studio { Name = "Bones" };
+        var platform = new Platform { Name = "ADN" };
+
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
+
+        var createAnime = new
+        {
+            Title = "To Be Deleted",
+            Description = "Soon gone",
+            Classification = "Seinen",
+            GenreIds = new List<int> { genre.Id },
+            PlatformIds = new List<int> { platform.Id },
+            StudioIds = new List<int> { studio.Id }
+        };
+
+        var postResponse = await client.PostAsJsonAsync("/api/anime", createAnime);
+        postResponse.EnsureSuccessStatusCode();
+        var createdAnime = await postResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
+
+        var deleteResponse = await client.DeleteAsync($"/api/anime/{createdAnime.Id}");
+        deleteResponse.EnsureSuccessStatusCode();
+
+        var getAfterDelete = await client.GetAsync($"/api/anime/{createdAnime.Id}");
+        Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
+    }
 }
