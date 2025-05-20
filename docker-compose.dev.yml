@@ -62,5 +62,18 @@ services:
       - ./mysql/init:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
 
+  anime-saas-agent:
+    build:
+      context: ./anime-saas-agent
+    container_name: anime-saas-agent
+    restart: always
+    environment:
+      - API_URL=http://anime-saas-api:8080/api
+    volumes:
+      - ./anime-saas-agent/docker-volumes/credentials/.env:/app/.env
+      - ./anime-saas-agent/docker-volumes/logs:/app/logs
+    depends_on:
+      - anime-saas-api
+
 volumes:
   mysql_data:

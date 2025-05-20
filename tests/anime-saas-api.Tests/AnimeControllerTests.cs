@@ -416,4 +416,197 @@ public class AnimeControllerTests : IClassFixture<AnimeWebApplicationFactory>
         var getAfterDelete = await client.GetAsync($"/api/anime/{createdAnime.Id}");
         Assert.Equal(HttpStatusCode.NotFound, getAfterDelete.StatusCode);
     }
+    
+    [Fact]
+    public async Task CreateAnime_WithValidData_ReturnsCreatedResponse()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        var genre = new Genre { Name = "Sci-Fi" };
+        var studio = new Studio { Name = "Sunrise" };
+        var platform = new Platform { Name = "Funimation" };
+
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        db.Platforms.Add(platform);
+        await db.SaveChangesAsync();
+
+        // Test avec un anime complet et valide
+        var animeToCreate = new
+        {
+            Title = "Valid Test Anime",
+            Description = "A valid test anime with all required fields",
+            ImageUrl = "https://example.com/image.jpg",
+            Season = "Winter",
+            SeasonYear = 2025,
+            DateStart = "2025-01-01",
+            DateEnd = "2025-03-31",
+            Classification = "Seinen",
+            EpisodeCount = 12,
+            Popularity = 8.5f, // Test avec une valeur float
+            TrailerUrl = "https://www.youtube.com/watch?v=example",
+            StreamingStatus = "CurrentlyAiring",
+            AvailableVersions = new List<string> { "VOSTFR", "VF" },
+            GenreNames = new List<string> { "Sci-Fi", "Action" },
+            StudioNames = new List<string> { "Sunrise", "Bandai" },
+            PlatformNames = new List<string> { "Funimation", "Crunchyroll" }
+        };
+
+        // Act
+        var response = await client.PostAsJsonAsync("/api/anime", animeToCreate);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        
+        var createdAnime = await response.Content.ReadFromJsonAsync<AnimeReadDto>();
+        Assert.NotNull(createdAnime);
+        Assert.Equal(animeToCreate.Title, createdAnime.Title);
+        Assert.Equal(animeToCreate.Popularity, createdAnime.Popularity);
+        Assert.Equal(animeToCreate.GenreNames.Count, createdAnime.Genres.Count);
+        Assert.Equal(animeToCreate.StudioNames.Count, createdAnime.Studios.Count);
+    }
+    
+    [Fact]
+    public async Task CreateAnime_WithMissingRequiredFields_ReturnsBadRequest()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        // Test avec un anime sans titre (champ requis)
+        var invalidAnime = new
+        {
+            Description = "An invalid anime without required fields",
+            ImageUrl = "https://example.com/image.jpg",
+            Season = "Winter",
+            SeasonYear = 2025,
+            // Title est manquant intentionnellement
+            GenreNames = new List<string>(), // Liste vide pour tester la validation
+            StudioNames = new List<string>() // Liste vide pour tester la validation
+        };
+
+        // Act
+        var response = await client.PostAsJsonAsync("/api/anime", invalidAnime);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        
+        var errorContent = await response.Content.ReadAsStringAsync();
+        Assert.Contains("Title", errorContent); // Vérifie que l'erreur mentionne le champ Title
+        Assert.Contains("GenreNames", errorContent); // Vérifie que l'erreur mentionne le champ GenreNames
+        Assert.Contains("StudioNames", errorContent); // Vérifie que l'erreur mentionne le champ StudioNames
+    }
+    
+    [Fact]
+    public async Task CreateAnime_WithFloatPopularity_ReturnsSuccess()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        var genre = new Genre { Name = "Fantasy" };
+        var studio = new Studio { Name = "Kyoto Animation" };
+        
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        await db.SaveChangesAsync();
+
+        // Test avec une valeur décimale pour Popularity
+        var animeToCreate = new
+        {
+            Title = "Float Popularity Test",
+            Description = "Testing float popularity value",
+            Classification = "Shonen",
+            Popularity = 7.8f, // Valeur décimale
+            GenreNames = new List<string> { "Fantasy" },
+            StudioNames = new List<string> { "Kyoto Animation" }
+        };
+
+        // Act
+        var response = await client.PostAsJsonAsync("/api/anime", animeToCreate);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var createdAnime = await response.Content.ReadFromJsonAsync<AnimeReadDto>();
+        Assert.NotNull(createdAnime);
+        Assert.Equal(animeToCreate.Popularity, createdAnime.Popularity);
+    }
+    
+    [Fact]
+    public async Task CreateAnime_WithDirectJsonStructure_ReturnsSuccess()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        
+        // Création d'un anime avec la structure JSON directe (sans encapsulation)
+        var directJsonAnime = new
+        {
+            title = "Direct JSON Test", // camelCase pour tester la désérialisation
+            description = "Testing direct JSON structure",
+            classification = "Shonen",
+            popularity = 8.5f,
+            genreNames = new List<string> { "Action", "Adventure" },
+            studioNames = new List<string> { "Studio Ghibli" }
+        };
+
+        // Act
+        var response = await client.PostAsJsonAsync("/api/anime", directJsonAnime);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var createdAnime = await response.Content.ReadFromJsonAsync<AnimeReadDto>();
+        Assert.NotNull(createdAnime);
+        Assert.Equal(directJsonAnime.title, createdAnime.Title);
+        Assert.Equal(directJsonAnime.popularity, createdAnime.Popularity);
+        Assert.Equal(directJsonAnime.genreNames.Count, createdAnime.Genres.Count);
+    }
+    
+    [Fact]
+    public async Task GetAnime_WithFloatPopularity_ReturnsCorrectType()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        using var scope = _factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<AnimeSaasApi.Context.AnimeSaasDbContext>();
+
+        var genre = new Genre { Name = "Slice of Life" };
+        var studio = new Studio { Name = "P.A. Works" };
+        
+        db.Genres.Add(genre);
+        db.Studios.Add(studio);
+        await db.SaveChangesAsync();
+
+        // Créer un anime avec une valeur décimale pour Popularity
+        var animeToCreate = new
+        {
+            Title = "Float Type Test",
+            Description = "Testing float type preservation",
+            Classification = "Slice of Life",
+            Popularity = 9.2f,
+            GenreNames = new List<string> { "Slice of Life" },
+            StudioNames = new List<string> { "P.A. Works" }
+        };
+
+        // Créer l'anime
+        var createResponse = await client.PostAsJsonAsync("/api/anime", animeToCreate);
+        createResponse.EnsureSuccessStatusCode();
+        var createdAnime = await createResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
+
+        // Act - Récupérer l'anime
+        var getResponse = await client.GetAsync($"/api/anime/{createdAnime.Id}");
+
+        // Assert
+        getResponse.EnsureSuccessStatusCode();
+        var retrievedAnime = await getResponse.Content.ReadFromJsonAsync<AnimeReadDto>();
+        Assert.NotNull(retrievedAnime);
+        Assert.Equal(animeToCreate.Popularity, retrievedAnime.Popularity);
+        Assert.IsType<float>(retrievedAnime.Popularity);
+    }
 }
