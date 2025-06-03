@@ -1,12 +1,25 @@
 services:
+  anime-saas-reverseproxy:
+    build:
+      context: ./anime-saas-reverseproxy
+    container_name: anime-saas-reverseproxy
+    ports:
+      - "8080:80"
+    depends_on:
+      - anime-saas-front
+      - anime-saas-api
+      - anime-saas-mlservice
+    restart: always
+
   anime-saas-front:
     build:
       context: ./anime-saas-front
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     container_name: anime-saas-front
     command: npm run dev
-    ports:
-      - "3000:3000"
+    # Port exposé uniquement sur le réseau interne
+    expose:
+      - "3000"
     volumes:
       - ./anime-saas-front:/app
       - /app/node_modules
@@ -23,8 +36,9 @@ services:
     command: dotnet watch run --urls=http://0.0.0.0:8080
     volumes:
       - ./anime-saas-api/AnimeSaasApi:/src
-    ports:
-      - "8080:8080"
+    # Port exposé uniquement sur le réseau interne
+    expose:
+      - "8080"
     env_file:
       - .env
     environment:
@@ -40,8 +54,9 @@ services:
     command: uvicorn main:app --host 0.0.0.0 --port 5000 --reload
     volumes:
       - ./anime-saas-mlservice/app:/app
-    ports:
-      - "5000:5000"
+    # Port exposé uniquement sur le réseau interne
+    expose:
+      - "5000"
     depends_on:
       - anime-saas-mysql
 
@@ -61,17 +76,16 @@ services:
       - mysql_data:/var/lib/mysql
 
   anime-saas-agent:
-    build:
-      context: ./anime-saas-agent
-    container_name: anime-saas-agent
-    restart: always
+    build: ./anime-saas-agent
+    env_file:
+      - ./anime-saas-agent/.env
     environment:
       - API_URL=http://anime-saas-api:8080/api
     volumes:
-      - ./anime-saas-agent/docker-volumes/credentials/.env:/app/.env
-      - ./anime-saas-agent/docker-volumes/logs:/app/logs
+      - ./anime-saas-agent/logs:/app/logs
     depends_on:
       - anime-saas-api
+    restart: unless-stopped
 
 volumes:
   mysql_data:

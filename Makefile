@@ -1,8 +1,6 @@
-dev:
-	docker compose -f docker-compose.dev.yml up --build
+build:
+	docker compose -f docker-compose.yml up --build
 
-prod:
-	 docker compose -f docker-compose.prod.yml up --build
 test:
 	docker build -f Dockerfile.test -t anime-saas-api-tests .
 	docker run --rm anime-saas-api-tests
