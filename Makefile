@@ -17,3 +17,21 @@ ps:
 
 update-submodules:
 	git submodule update --remote --recursive
+
+scrape:
+	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --limit 10
+
+scrape-random:
+	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --limit 10
+
+scrape-popular:
+	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --limit 10 --no-random
+
+scrape-no-ai:
+	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --limit 5 --no-random --no-complete-fields
+
+scrape-test:
+	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --limit 1
+
+rebuild-agent:
+	docker compose build anime-saas-agent
