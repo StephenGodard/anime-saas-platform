@@ -18,13 +18,10 @@ services:
       context: ./anime-saas-front
       dockerfile: Dockerfile
     container_name: anime-saas-front
-    command: npm run dev
-    # Port exposé uniquement sur le réseau interne
+    # Suppression de la commande redondante car déjà définie dans le Dockerfile
     expose:
       - "3000"
-    volumes:
-      - ./anime-saas-front:/app
-      - /app/node_modules
+
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
@@ -91,3 +88,4 @@ services:
 
 volumes:
   mysql_data:
+  nuxt_cache:
