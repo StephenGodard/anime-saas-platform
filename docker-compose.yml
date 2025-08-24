@@ -35,7 +35,6 @@ services:
     command: dotnet watch run --urls=http://0.0.0.0:8080
     volumes:
       - ./anime-saas-api/AnimeSaasApi:/src
-      - ./secrets/sa-api.json:/secrets/sa-api.json:ro
     # Port exposé uniquement sur le réseau interne
     expose:
       - "8080"
@@ -44,8 +43,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DefaultConnection=Server=${DB_HOST};Database=${DB_NAME};User Id=animeuser;Password=animepass;
-      - GOOGLE_APPLICATION_CREDENTIALS=/secrets/sa-api.json
-      - GCS_BUCKET=animesphere-io-assets
     depends_on:
       - anime-saas-mysql
 
