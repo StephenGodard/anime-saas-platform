@@ -1,7 +1,6 @@
 .DS_Store
-
+secrets
 tests/anime-saas-api.Tests/bin
 tests/anime-saas-api.Tests/obj
 .env
 mysql/init/
-docker-compose.yml
