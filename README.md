@@ -11,10 +11,10 @@ Le projet est découpé en **plusieurs microservices** :
 
 | Service | Description |
 |:---|:---|
-| **anime-saas-api** | API backend développée en **.NET 9** pour la gestion des données utilisateur, des animes, de la watchlist et des préférences. |
+| **anime-saas-api** | API backend développée en **.NET 8** pour la gestion des données utilisateur, des animes, de la watchlist et des préférences. |
 | **anime-saas-front** | Frontend développé avec **Nuxt 3** pour l'affichage des recommandations, de la watchlist et du calendrier de sortie des animes. |
 | **anime-saas-mlservice** | Service de **Machine Learning Python** (FastAPI) générant les recommandations personnalisées. |
-| **anime-saas-agent** | Microservice Python autonome chargé de collecter et enrichir automatiquement les données d'animes (depuis MyAnimeList et d'autres sources). |
+| **anime-saas-agent** | Microservice Python autonome chargé de collecter et enrichir automatiquement les données d'animes (depuis AniList, MyAnimeList et d'autres sources). |
 | **MySQL** | Base de données relationnelle stockant les utilisateurs, animes, préférences, interactions et watchlists. |
 
 L'infrastructure est entièrement **dockerisée** pour simplifier le développement, les tests et le déploiement 🚀.
@@ -34,22 +34,27 @@ La documentation complète est disponible ici :
 ## 🛠️ Démarrage rapide
 
 1. Clonez ce dépôt avec les submodules :
+
 ```bash
 git clone --recurse-submodules <url-du-repo>
 ```
 
 2. Placez-vous dans le projet :
+
 ```bash
 cd anime-saas-platform
 ```
 
 3. Lancez l'environnement de développement :
+
 ```bash
-make dev
+make up
 ```
+
 Cela démarrera tous les services nécessaires en mode développement avec **hot reload**.
 
 4. Pour arrêter les services :
+
 ```bash
 make down
 ```
@@ -73,8 +78,8 @@ make down
 
 ## 📦 Stack technique utilisée
 
-- Frontend ➔ **Nuxt 3** (Node.js)
-- Backend ➔ **.NET 9 API Web**
+- Frontend ➔ **Nuxt 3** (Vite)
+- Backend ➔ **.NET 8 API Web**
 - Machine Learning ➔ **Python + FastAPI**
 - Agent IA ➔ **Python** (microservice autonome de scraping et enrichissement de données)
 - Base de données ➔ **MySQL 8**
@@ -97,35 +102,21 @@ make down
 ## ⚡ Important - Gestion des submodules Git
 
 Quand vous clonez le projet, utilisez bien l'option :
+
 ```bash
 git clone --recurse-submodules <url-du-repo>
 ```
 
 Si vous oubliez ➔ pensez à initialiser et récupérer les submodules manuellement :
+
 ```bash
 git submodule update --init --recursive
 ```
 
 Pour mettre à jour les submodules :
+
 ```bash
 git submodule update --remote
 ```
 
 ---
-
-## 🧹 TODO
-
-- ✅ Finaliser le back-end en fonction des contraintes UX (modèles, contrôleurs, services)
-- 🧪 Ajouter des tests d’intégration (EF Core InMemory)
-- 🎨 Finaliser les spécifications UX et démarrer les maquettes Figma
-- 🌐 Implémenter le front Nuxt (onboarding, swipe, recommandations)
-- 🧠 Développement du microservice ML avec Scikit-learn
-- 📡 Intégration agent IA pour enrichir les données (MyAnimeList, web scraping)
-- 🔐 Sécuriser l'API avec JWT + OAuth2
-- 🚢 Déployer les services sur VPS + configurer les noms de domaines
-- 📈 Mettre en place la télémétrie (logs, métriques, alertes)
-- 🧼 Préparer la CI/CD GitHub Actions pour build + test + déploiement auto
-
----
-
-**Let's build something amazing! 🚀🎯**
