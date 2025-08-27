@@ -1,0 +1,76 @@
+services:
+  reverseproxy:
+    image: ghcr.io/stephengodard/anime-saas-reverseproxy:main-<sha>
+    container_name: anime-rev
+    ports: ["80:80"]
+    depends_on:
+      - front
+      - api
+      - mlservice
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+
+  front:
+    image: ghcr.io/stephengodard/anime-saas-front:main-<sha>
+    container_name: anime-front
+    env_file: ./config/front/.env
+    expose: ["3000"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    image: ghcr.io/stephengodard/anime-saas-api:main-<sha>
+    container_name: anime-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: "Server=anime-saas-mysql;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};"
+    env_file: ./config/api/.env
+    volumes:
+      - ./config/api/appsettings.Production.json:/app/appsettings.Production.json:ro
+    expose: ["8080"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    depends_on:
+      - anime-saas-mysql
+
+  mlservice:
+    image: ghcr.io/stephengodard/anime-saas-mlservice:main-<sha>
+    container_name: anime-ml
+    command: uvicorn main:app --host 0.0.0.0 --port 5000
+    env_file: ./config/mlservice/ml.env
+    environment:
+      DATABASE_URL: "mysql+pymysql://${DB_USER}:${DB_PASSWORD}@anime-saas-mysql:3306/${DB_NAME}"
+    expose: ["5000"]
+    restart: unless-stopped
+    depends_on:
+      - anime-saas-mysql
+
+  anime-saas-mysql:
+    image: mysql:8
+    container_name: anime-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    # pas de port publié -> interne seulement
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u${DB_USER} -p${DB_PASSWORD} --silent"]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
