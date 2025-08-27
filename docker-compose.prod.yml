@@ -1,6 +1,6 @@
 services:
   reverseproxy:
-    image: ghcr.io/stephengodard/anime-saas-reverseproxy:main-<sha>
+    image: ghcr.io/stephengodard/anime-saas-reverseproxy:main-${IMAGE_TAG_PROXY}
     container_name: anime-rev
     ports: ["80:80"]
     depends_on:
@@ -12,7 +12,7 @@ services:
     restart: unless-stopped
 
   front:
-    image: ghcr.io/stephengodard/anime-saas-front:main-<sha>
+    image: ghcr.io/stephengodard/anime-saas-front:main-${IMAGE_TAG_FRONT}
     container_name: anime-front
     env_file: ./config/front/.env
     expose: ["3000"]
@@ -24,7 +24,7 @@ services:
     restart: unless-stopped
 
   api:
-    image: ghcr.io/stephengodard/anime-saas-api:main-<sha>
+    image: ghcr.io/stephengodard/anime-saas-api:main-${IMAGE_TAG_API}
     container_name: anime-api
     environment:
       ASPNETCORE_ENVIRONMENT: Production
@@ -42,7 +42,7 @@ services:
       - anime-saas-mysql
 
   mlservice:
-    image: ghcr.io/stephengodard/anime-saas-mlservice:main-<sha>
+    image: ghcr.io/stephengodard/anime-saas-mlservice:main-${IMAGE_TAG_MLSERVICE}
     container_name: anime-ml
     command: uvicorn main:app --host 0.0.0.0 --port 5000
     environment:
@@ -53,7 +53,7 @@ services:
       - anime-saas-mysql
 
   agent:
-    image: ghcr.io/stephengodard/anime-saas-agent:main-<sha>
+    image: ghcr.io/stephengodard/anime-saas-agent:main-${IMAGE_TAG_AGENT}
     container_name: anime-agent
     env_file:
       - ./config/agent/.env
