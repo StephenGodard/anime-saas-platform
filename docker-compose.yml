@@ -35,7 +35,6 @@ services:
     command: dotnet watch run --urls=http://0.0.0.0:8080
     volumes:
       - ./anime-saas-api/AnimeSaasApi:/src
-    # Port exposé uniquement sur le réseau interne
     expose:
       - "8080"
     env_file:
@@ -81,7 +80,7 @@ services:
     env_file:
       - ./anime-saas-agent/.env
     environment:
-      - API_URL=http://anime-saas-api:8080/api
+      - API_URL=http://anime-saas-api:8080/api 
     volumes:
       - ./anime-saas-agent/logs:/app/logs
     depends_on:
