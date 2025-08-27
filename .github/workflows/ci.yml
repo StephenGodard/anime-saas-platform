@@ -11,40 +11,18 @@ env:
   IMAGE_PREFIX: ${{ github.repository }}
 
 jobs:
-  # Job principal pour builder et publier les images Docker
-  build-and-push:
+  # Job pour builder uniquement le reverse proxy (pas de submodule)
+  build-reverseproxy:
     runs-on: ubuntu-latest
-    name: Build and Push Docker Images
+    name: Build Reverse Proxy
     
     permissions:
       contents: read
       packages: write
     
-    strategy:
-      matrix:
-        service:
-          - name: anime-saas-front
-            context: ./anime-saas-front
-            dockerfile: ./anime-saas-front/Dockerfile
-          - name: anime-saas-api
-            context: ./anime-saas-api
-            dockerfile: ./anime-saas-api/Dockerfile
-          - name: anime-saas-mlservice
-            context: ./anime-saas-mlservice
-            dockerfile: ./anime-saas-mlservice/Dockerfile
-          - name: anime-saas-agent
-            context: ./anime-saas-agent
-            dockerfile: ./anime-saas-agent/Dockerfile
-          - name: anime-saas-reverseproxy
-            context: ./anime-saas-reverseproxy
-            dockerfile: ./anime-saas-reverseproxy/Dockerfile
-    
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        token: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Log in to Container Registry
       uses: docker/login-action@v3
@@ -57,7 +35,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.service.name }}
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/anime-saas-reverseproxy
         tags: |
           type=ref,event=branch
           type=ref,event=pr
@@ -70,8 +48,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: ${{ matrix.service.context }}
-        file: ${{ matrix.service.dockerfile }}
+        context: ./anime-saas-reverseproxy
+        file: ./anime-saas-reverseproxy/Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -80,16 +58,16 @@ jobs:
         platforms: linux/amd64,linux/arm64
 
   deploy-staging:
-    needs: build-and-push
+    needs: build-reverseproxy
     runs-on: ubuntu-latest
     name: Deploy to Staging
     if: github.ref == 'refs/heads/dev'
     
     env:
       # Variables de base de données
-      DB_HOST: ${{ vars.DB_HOST || 'anime-saas-mysql' }}
-      DB_NAME: ${{ vars.DB_NAME || 'anime_saas_db' }}
-      DB_USER: ${{ vars.DB_USER || 'animeuser' }}
+      DB_HOST: ${{ vars.DB_HOST }}
+      DB_NAME: ${{ vars.DB_NAME }}
+      DB_USER: ${{ vars.DB_USER }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       DB_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
       
@@ -110,7 +88,7 @@ jobs:
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       
       # Registry pour les images Docker
-      REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX || 'ghcr.io/stephengodard' }}
+      REGISTRY_PREFIX: ${{ vars.REGISTRY_PREFIX }}
     
     steps:
     - name: Checkout repository
