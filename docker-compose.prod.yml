@@ -1,19 +1,18 @@
 services:
-  reverseproxy:
-    image: ghcr.io/stephengodard/anime-saas-reverseproxy:main-${IMAGE_TAG_PROXY}
+  anime-saas-reverseproxy:
+    image: ghcr.io/stephengodard/anime-saas-platform/anime-saas-reverseproxy:main-49f0c2f
     container_name: anime-rev
-    ports: ["80:80"]
     depends_on:
-      - front
-      - api
-      - mlservice
-    volumes:
-      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - anime-saas-front
+      - anime-saas-api
+      - anime-saas-mlservice
     restart: unless-stopped
+    ports:
+      - "80:80"
 
-  front:
+  anime-saas-front:
     image: ghcr.io/stephengodard/anime-saas-front:main-${IMAGE_TAG_FRONT}
-    container_name: anime-front
+    container_name: anime-saas-front
     env_file: ./config/front/.env
     expose: ["3000"]
     healthcheck:
@@ -23,14 +22,15 @@ services:
       retries: 5
     restart: unless-stopped
 
-  api:
+  anime-saas-api:
     image: ghcr.io/stephengodard/anime-saas-api:main-${IMAGE_TAG_API}
-    container_name: anime-api
+    container_name: anime-saas-api
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__DefaultConnection: "Server=anime-saas-mysql;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};"
     volumes:
       - ./config/api/appsettings.json:/app/appsettings.json:ro
+      - ./config/api/sa-api.json:/app/sa-api.json:ro
     expose: ["8080"]
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
@@ -41,9 +41,9 @@ services:
     depends_on:
       - anime-saas-mysql
 
-  mlservice:
+  anime-saas-mlservice:
     image: ghcr.io/stephengodard/anime-saas-mlservice:main-${IMAGE_TAG_MLSERVICE}
-    container_name: anime-ml
+    container_name: anime-saas-mlservice
     command: uvicorn main:app --host 0.0.0.0 --port 5000
     environment:
       DATABASE_URL: "mysql+pymysql://${DB_USER}:${DB_PASSWORD}@anime-saas-mysql:3306/${DB_NAME}"
@@ -52,9 +52,9 @@ services:
     depends_on:
       - anime-saas-mysql
 
-  agent:
+  anime-saas-agent:
     image: ghcr.io/stephengodard/anime-saas-agent:main-${IMAGE_TAG_AGENT}
-    container_name: anime-agent
+    container_name: anime-saas-agent
     env_file:
       - ./config/agent/.env
     environment:
@@ -67,8 +67,8 @@ services:
     restart: unless-stopped
 
   anime-saas-mysql:
-    image: mysql:8
-    container_name: anime-mysql
+    image: docker.io/library/mysql:8
+    container_name: anime-saas-mysql
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}
