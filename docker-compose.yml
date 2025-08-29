@@ -4,7 +4,7 @@ services:
       context: ./anime-saas-reverseproxy
     container_name: anime-saas-reverseproxy
     volumes:
-      - ./anime-saas-reverseproxy/nginx.conf:/etc/nginx/nginx.conf
+      - ./anime-saas-reverseproxy/nginx-test.conf:/etc/nginx/nginx.conf
     ports:
       - "8080:80"
     depends_on:

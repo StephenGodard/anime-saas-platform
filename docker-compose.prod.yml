@@ -1,36 +1,37 @@
 services:
   anime-saas-reverseproxy:
-    image: ghcr.io/stephengodard/anime-saas-platform/anime-saas-reverseproxy:main-49f0c2f
-    container_name: anime-rev
+    image: ghcr.io/stephengodard/anime-saas-platform/anime-saas-reverseproxy:latest
+    container_name: anime-saas-reverseproxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./config/certbot/www:/var/www/certbot
+      - ./config/certbot/conf:/etc/letsencrypt
     depends_on:
       - anime-saas-front
       - anime-saas-api
       - anime-saas-mlservice
-    restart: unless-stopped
-    ports:
-      - "80:80"
-
   anime-saas-front:
     image: ghcr.io/stephengodard/anime-saas-front:main-${IMAGE_TAG_FRONT}
     container_name: anime-saas-front
     env_file: ./config/front/.env
     expose: ["3000"]
+    environment:
+      NUXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 5
     restart: unless-stopped
-
   anime-saas-api:
     image: ghcr.io/stephengodard/anime-saas-api:main-${IMAGE_TAG_API}
     container_name: anime-saas-api
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ConnectionStrings__DefaultConnection: "Server=anime-saas-mysql;Database=${DB_NAME};User Id=${DB_USER};Password=${DB_PASSWORD};"
-    volumes:
-      - ./config/api/appsettings.json:/app/appsettings.json:ro
-      - ./config/api/sa-api.json:/app/sa-api.json:ro
     expose: ["8080"]
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
@@ -38,9 +39,11 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    volumes:
+      - ./config/api/appsettings.json:/app/appsettings.json:ro
+      - ./config/api/sa-api.json:/app/sa-api.json:ro
     depends_on:
       - anime-saas-mysql
-
   anime-saas-mlservice:
     image: ghcr.io/stephengodard/anime-saas-mlservice:main-${IMAGE_TAG_MLSERVICE}
     container_name: anime-saas-mlservice
@@ -51,21 +54,19 @@ services:
     restart: unless-stopped
     depends_on:
       - anime-saas-mysql
-
   anime-saas-agent:
     image: ghcr.io/stephengodard/anime-saas-agent:main-${IMAGE_TAG_AGENT}
     container_name: anime-saas-agent
     env_file:
       - ./config/agent/.env
     environment:
-      API_URL: http://api:8080/api
+      API_URL: http://anime-saas-api:8080/api
+    restart: unless-stopped
     volumes:
       - ./config/agent/sa-agent.json:/app/sa-agent.json:ro
       - ./anime-saas-agent/logs:/app/logs
     depends_on:
-      - api
-    restart: unless-stopped
-
+      - anime-saas-api
   anime-saas-mysql:
     image: docker.io/library/mysql:8
     container_name: anime-saas-mysql
@@ -74,15 +75,14 @@ services:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
       MYSQL_PASSWORD: ${DB_PASSWORD}
-    volumes:
-      - mysql_data:/var/lib/mysql
-    # pas de port publié -> interne seulement
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u${DB_USER} -p${DB_PASSWORD} --silent"]
       interval: 20s
       timeout: 5s
       retries: 10
     restart: unless-stopped
-
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./config/mysql/init:/docker-entrypoint-initdb.d:ro
 volumes:
   mysql_data:
