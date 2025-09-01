@@ -33,5 +33,14 @@ scrape-no-ai:
 scrape-test:
 	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --limit 1
 
+backfill-images:
+	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --backfill --batch-size 200
+
+backfill-images-test:
+	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --backfill --batch-size 10 --dry-run
+
+backfill-images-small:
+	docker compose run --rm anime-saas-agent python -m src.agent.core.scheduler --now --backfill --batch-size 50
+
 rebuild-agent:
 	docker compose build anime-saas-agent

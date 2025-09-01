@@ -80,6 +80,7 @@ services:
     environment:
       - API_URL=http://anime-saas-api:8080/api 
     volumes:
+      - ./anime-saas-agent/sa-agent.json:/app/sa-agent.json:ro
       - ./anime-saas-agent/logs:/app/logs
     depends_on:
       - anime-saas-api
