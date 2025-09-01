@@ -58,6 +58,19 @@ services:
     depends_on:
       - anime-saas-mysql
 
+  anime-saas-mlscheduler:
+    build:
+      context: ./anime-saas-mlservice
+      dockerfile: Dockerfile.scheduler
+    container_name: anime-saas-mlscheduler
+    volumes:
+      - ./anime-saas-mlservice/app:/app
+    environment:
+      - DATABASE_URL=mysql+pymysql://${DB_USER}:${DB_PASSWORD}@anime-saas-mysql:3306/${DB_NAME}
+    depends_on:
+      - anime-saas-mysql
+    restart: unless-stopped
+
   anime-saas-mysql:
     image: mysql:8
     container_name: anime-saas-mysql

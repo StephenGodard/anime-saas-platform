@@ -54,6 +54,15 @@ services:
     restart: unless-stopped
     depends_on:
       - anime-saas-mysql
+
+  anime-saas-mlscheduler:
+    image: ghcr.io/stephengodard/anime-saas-mlscheduler:main-${IMAGE_TAG_MLSCHEDULER}
+    container_name: anime-saas-mlscheduler
+    environment:
+      DATABASE_URL: "mysql+pymysql://${DB_USER}:${DB_PASSWORD}@anime-saas-mysql:3306/${DB_NAME}"
+    restart: unless-stopped
+    depends_on:
+      - anime-saas-mysql
   anime-saas-agent:
     image: ghcr.io/stephengodard/anime-saas-agent:main-${IMAGE_TAG_AGENT}
     container_name: anime-saas-agent
