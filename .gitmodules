@@ -10,3 +10,7 @@
 [submodule "anime-saas-agent"]
 	path = anime-saas-agent
 	url = git@github.com:StephenGodard/anime-saas-agent.git
+[submodule "anime-saas-reverseproxy"]
+	path = anime-saas-reverseproxy
+	url = https://github.com/StephenGodard/anime-saas-reverseproxy.git
+	branch = main
