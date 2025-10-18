@@ -102,8 +102,10 @@ popularityPenalty = -(anime.popularity / 500)
 
 ### Backend Endpoints
 
-- **`/api/Anime/onboarding-candidates`** : 7 animes pour le swipe
-- **`/api/Anime/recommendation-dataset`** : 50 animes pour l'algorithme final
+Les seules requêtes envoyées au backend sont :
+
+1. **`/api/Anime/recommendation-dataset`** : 50 animes candidats pour la recommandation finale  
+2. **`/api/Anime/onboarding-candidates`** : 7 animes utilisés dans le swipe
 
 ### Persistance (SessionStorage)
 
@@ -114,6 +116,8 @@ interface OnboardingState {
   recommendedAnimes: RecommendationResult[]  // Top 5 final
 }
 ```
+
+Toutes les réponses aux questions et les interactions de swipe sont stockées uniquement côté client (via Pinia / SessionStorage) jusqu’à l’inscription éventuelle.
 
 ---
 
@@ -153,8 +157,9 @@ generateStudioPreferences(): Array<{studioName: string, score: number}>
 
 ### Intégration API
 
-- Les préférences sont envoyées lors de l'inscription
-- Format compatible avec les endpoints backend existants
+- Les préférences sont envoyées lors de l'inscription  
+- Ce transfert n’a lieu qu’au moment où l’utilisateur choisit de créer un compte. Aucune donnée n’est persistée avant.  
+- Format compatible avec les endpoints backend existants  
 - Permet la personnalisation immédiate des recommandations
 
 ---
