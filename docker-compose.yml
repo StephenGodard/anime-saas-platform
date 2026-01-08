@@ -99,6 +99,21 @@ services:
       - anime-saas-api
     restart: unless-stopped
 
+  anime-saas-status-scheduler:
+    build:
+      context: ./anime-saas-agent
+      dockerfile: Dockerfile.status-scheduler
+    container_name: anime-saas-status-scheduler
+    env_file:
+      - ./anime-saas-agent/.env
+    environment:
+      - API_URL=https://dev.animesphere.io/api
+    volumes:
+      - ./anime-saas-agent/logs:/app/logs
+    depends_on:
+      - anime-saas-api
+    restart: unless-stopped
+
 volumes:
   mysql_data:
   nuxt_cache:

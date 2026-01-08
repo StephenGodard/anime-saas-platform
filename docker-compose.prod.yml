@@ -76,6 +76,18 @@ services:
       - ./anime-saas-agent/logs:/app/logs
     depends_on:
       - anime-saas-api
+  anime-saas-status-scheduler:
+    image: ghcr.io/stephengodard/anime-saas-status-scheduler:main-${IMAGE_TAG_STATUS_SCHEDULER}
+    container_name: anime-saas-status-scheduler
+    env_file:
+      - ./config/agent/.env
+    environment:
+      API_URL: http://anime-saas-api:8080/api
+    restart: unless-stopped
+    volumes:
+      - ./anime-saas-agent/logs:/app/logs
+    depends_on:
+      - anime-saas-api
   anime-saas-mysql:
     image: docker.io/library/mysql:8
     container_name: anime-saas-mysql
