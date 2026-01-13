@@ -1,7 +1,7 @@
-# Anime SaaS Platform
+# Animesphere
 
-Bienvenue dans le projet **Anime SaaS Platform** 🎯🚀  
-Ce projet est une plateforme SaaS complète permettant de recommander, gérer et suivre les anime de saison.
+Bienvenue dans le projet **Animesphere** 🎯🚀  
+Ce projet est une plateforme SaaS complète permettant de recommander, gérer et suivre facilement les anime de saison. avec un UX agréable et un design moderne.
 
 ---
 
@@ -12,9 +12,9 @@ Le projet est découpé en **plusieurs microservices** :
 | Service | Description |
 |:---|:---|
 | **anime-saas-api** | API backend développée en **.NET 8** pour la gestion des données utilisateur, des animes, de la watchlist et des préférences. |
-| **anime-saas-front** | Frontend développé avec **Nuxt 3** pour l'affichage des recommandations, de la watchlist et du calendrier de sortie des animes. |
-| **anime-saas-mlservice** | Service de **Machine Learning Python** (FastAPI) générant les recommandations personnalisées. |
-| **anime-saas-agent** | Microservice Python autonome chargé de collecter et enrichir automatiquement les données d'animes (depuis AniList, MyAnimeList et d'autres sources). |
+| **anime-saas-front** | Frontend développé avec **Nuxt 3** pour la partie front-end de l'application. |
+| **anime-saas-mlservice** | Service de **Machine Learning** générant les recommandations personnalisées en fonction des préférences des utilisateurs. |
+| **anime-saas-agent** | Microservice Python chargé de collecter et enrichir automatiquement les données d'animes (depuis AniList)|
 | **MySQL** | Base de données relationnelle stockant les utilisateurs, animes, préférences, interactions et watchlists. |
 
 L'infrastructure est entièrement **dockerisée** pour simplifier le développement, les tests et le déploiement 🚀.
@@ -29,7 +29,7 @@ Voici l'architecture complète du projet
 ## 📖 Documentation du projet
 
 La documentation complète est disponible ici :  
-👉 [Consulter sur Notion](https://tattered-letter-62f.notion.site/Anime-SaaS-Platforme-1bb32705124c8056bc3ff23392ebcf20)
+👉 [Consulter sur Notion](https://animesphere.notion.site/)
 
 ## 🛠️ Démarrage rapide
 
@@ -65,10 +65,12 @@ make down
 
 | Dossier/Fichier | Rôle |
 |:---|:---|
-| `/anime-saas-api/` | Backend API (submodule Git) |
-| `/anime-saas-front/` | Frontend Nuxt 3 (submodule Git) |
-| `/anime-saas-mlservice/` | Service ML Python (submodule Git) |
-| `/anime-saas-agent/` | Agent IA Python (submodule Git) |
+| `/anime-saas-api/` | Backend API |
+| `/anime-saas-front/` | Frontend Nuxt 3 |
+| `/anime-saas-mlservice/` | Service ML Python FastApi |
+| `/anime-saas-agent/` | Agent Scrapping Python |
+| `/anime-saas-landing/` | Landing Page |
+| `/anime-saas-reverseproxy/` | Reverse Proxy Nginx |
 | `docker-compose.dev.yml` | Orchestration Docker pour l'environnement **Développement** |
 | `docker-compose.prod.yml` | Orchestration Docker pour l'environnement **Production** |
 | `Makefile` | Automatisation des commandes courantes |
@@ -82,6 +84,7 @@ make down
 - Backend ➔ **.NET 8 API Web**
 - Machine Learning ➔ **Python + FastAPI**
 - Agent IA ➔ **Python** (microservice autonome de scraping et enrichissement de données)
+- Reverse Proxy ➔ **Nginx**
 - Base de données ➔ **MySQL 8**
 - Infrastructure ➔ **Docker + Docker Compose**
 
@@ -91,32 +94,11 @@ make down
 
 | Commande | Description |
 |:---|:---|
-| `make dev` | Démarre tous les services en mode développement |
+| `make up` | Démarre tous les services en mode développement |
 | `make prod` | Démarre tous les services en mode production |
 | `make down` | Stoppe tous les services |
 | `make clean` | Nettoie tous les containers, images et volumes |
-| `make update-submodules` | Met à jour les submodules |
-
----
-
-## ⚡ Important - Gestion des submodules Git
-
-Quand vous clonez le projet, utilisez bien l'option :
-
-```bash
-git clone --recurse-submodules <url-du-repo>
-```
-
-Si vous oubliez ➔ pensez à initialiser et récupérer les submodules manuellement :
-
-```bash
-git submodule update --init --recursive
-```
-
-Pour mettre à jour les submodules :
-
-```bash
-git submodule update --remote
-```
+| `make ps` | Affiche les containers en cours d'exécution |
+| `make test` | Lance les tests |
 
 ---
