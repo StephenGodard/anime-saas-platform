@@ -61,15 +61,6 @@ make down
 
 👉 [Accéder à l'espace Notion complet](https://animesphere.notion.site/)
 
-## Repositories
-
-- anime-saas-api
-- anime-saas-front
-- anime-saas-mlservice
-- anime-saas-agent
-- anime-saas-reverseproxy
-- animesphere-landing
-
 ---
 
 ## 🧠 Commandes utiles
