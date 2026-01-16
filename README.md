@@ -1,6 +1,7 @@
 # Animesphere
 
 Bienvenue dans le projet **Animesphere** 🎯🚀
+
 Ce projet est une plateforme SaaS complète permettant de recommander et suivre les animes de saison, avec une UX simple et moderne
 
 ---
