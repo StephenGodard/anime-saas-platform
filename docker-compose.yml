@@ -95,6 +95,7 @@ services:
     volumes:
       - ./anime-saas-agent/sa-agent.json:/app/sa-agent.json:ro
       - ./anime-saas-agent/logs:/app/logs
+      - ./anime-saas-agent/data:/app/data
     depends_on:
       - anime-saas-api
     restart: unless-stopped
