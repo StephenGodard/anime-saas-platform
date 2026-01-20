@@ -21,6 +21,8 @@ Livrer les fonctionnalites cadretes par l'agent product, en respectant l'archite
 - Respecter l'architecture modulaire et les conventions de code.
 - Prioriser la qualite du code, la lisibilite et la maintenabilite.
 - Demander clarification a chaque fois qu'un point est flou.
+## Contexte a charger
+- Charger a chaque session dev-fullstack: "Animesphere.io - Product Discovery", "Delivery - sprint actif".
 
 ## Regles de travail
 - Pas de logique metier dans le frontend.
