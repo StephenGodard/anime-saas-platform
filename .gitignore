@@ -5,3 +5,4 @@ tests/anime-saas-api.Tests/obj
 .env
 mysql/init/
 .windsurf/*
+.codex/config.toml
