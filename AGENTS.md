@@ -31,6 +31,8 @@ Exemples :
 - Limiter le contexte a l'essentiel par agent.
 - Referencer les pages Notion pertinentes quand c'est utile.
 - Rester concis et actionnable dans les livrables.
+- Ne pas demander comment lancer un programme si la commande est decrite dans la documentation d'un agent; se referer a ses sources de verite et executer.
+- Apres chaque intervention d'un agent executant (dev-fullstack ou data-scientist), produire une note et la transmettre a l'agent product pour arbitrage.
 - Workflow par defaut: ideation -> creation d'une release avec intentions -> brainstorming et cadrage -> validation du perimetre -> creation du tag release (ex: 0.4.0) -> user stories en base "Delivery - sprint actif".
 - Implémentation: `dev-fullstack` couvre les tags "Front-End" et "Back-End"; `data-scientist` couvre les tags "Agent IA" et "Machine Learning".
 - Coordination: si une fonctionnalite touche a la data et au fullstack, `data-scientist` et `dev-fullstack` doivent se synchroniser.
