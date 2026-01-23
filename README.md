@@ -8,11 +8,16 @@ Ce projet est une plateforme SaaS complète permettant de recommander et suivre 
 
 ## 📚 Pourquoi AnimeSphere ?
 
-- Trop d'anime
-- Trop de plateformes
-- Recos géneriques
+Les plateformes existantes :
+- recensent tout,
+- recommandent peu,
+- privilégient la popularité.
 
-AnimeSphere priorise les animes faits pour toi, selon tes goûts réels.
+AnimeSphere fait l’inverse.
+
+Ce n’est pas une encyclopédie.
+C’est un **outil de décision** :
+“Qu’est-ce que je regarde cette saison ?”
 
 ## 📦 Stack technique utilisée
 
@@ -76,3 +81,12 @@ make down
 | `make test` | Lance les tests |
 
 ---
+
+## 🚧 Statut du projet
+
+AnimeSphere est actuellement en **phase de MVP avancé**.
+
+- Fonctionnalités clés implémentées et opérationnelles
+- Prototype déployé et testable
+- Phase de bêta privée imminente 👀
+- Focus actuel : qualité des contenus et optimisation des parcours utilisateurs
