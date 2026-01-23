@@ -2,7 +2,7 @@ up:
 	docker compose -f docker-compose.yml up --build
 
 test:
-	docker build -f Dockerfile.test -t anime-saas-api-tests .
+	docker build -f anime-saas-api/Dockerfile.test -t anime-saas-api-tests anime-saas-api
 	docker run --rm anime-saas-api-tests
 
 prod:

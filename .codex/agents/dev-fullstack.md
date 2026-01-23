@@ -24,6 +24,7 @@ Livrer les fonctionnalites cadrees par l'agent product, en respectant l'architec
 - Notion: "Documentation technique Architecture & systeme".
   https://animesphere.notion.site/Documentation-Technique-Architecture-Syst-mes-20432705124c80e19921d6b1f4d42976
 - Repo: `anime-saas-front/README.md` et `anime-saas-api/README.md`.
+- Documentation Nuxt UI via MCP : mcp_servers.nuxt-ui
 - Regles: `/Users/stephen.godard/.codeium/windsurf/memories/global_rules.md`
   (sections: Structure & Architecture, Frontend, Backend).
 
@@ -34,8 +35,9 @@ La priorité ne s’applique qu’en cas d’information contradictoire.
 
 1. Notion – Delivery / sprint actif (source principale)
 2. Notion – Documentation technique
-3. README du repo
-4. Règles globales Windsurf
+3. Documentation Nuxt UI via MCP : mcp_servers.nuxt-ui
+4. README du repo
+5. Règles globales Windsurf
 
 ## Responsabilites
 
