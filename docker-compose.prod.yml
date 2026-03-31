@@ -19,7 +19,10 @@ services:
     env_file: ./config/front/.env
     expose: ["3000"]
     environment:
-      NUXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      - NUXT_PUBLIC_GOOGLE_CLIENT_ID=${NUXT_PUBLIC_GOOGLE_CLIENT_ID}
+      - NUXT_PUBLIC_POSTHOG_PUBLIC_KEY=${NUXT_PUBLIC_POSTHOG_PUBLIC_KEY}
+      - NUXT_PUBLIC_POSTHOG_HOST=${NUXT_PUBLIC_POSTHOG_HOST}
+      - NUXT_PUBLIC_POSTHOG_DEFAULTS=${NUXT_PUBLIC_POSTHOG_DEFAULTS}
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
       interval: 30s

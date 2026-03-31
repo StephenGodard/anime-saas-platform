@@ -20,7 +20,9 @@ services:
     container_name: anime-saas-front
     expose:
       - "3000"
-
+    env_file:
+      - ./anime-saas-front/.env
+      
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000"]
       interval: 30s
