@@ -25,6 +25,7 @@ Livrer les fonctionnalites cadrees par l'agent product, en respectant l'architec
   https://animesphere.notion.site/Documentation-Technique-Architecture-Syst-mes-20432705124c80e19921d6b1f4d42976
 - Repo: `anime-saas-front/README.md` et `anime-saas-api/README.md`.
 - Documentation Nuxt UI via MCP : mcp_servers.nuxt-ui
+- Chrome DevTools via MCP : mcp_servers.chrome-devtools pour verifier les changements frontend dans Chrome, inspecter console/reseau/DOM/CSS, reproduire les parcours utilisateur et analyser les performances.
 - Regles: `/Users/stephen.godard/.codeium/windsurf/memories/global_rules.md`
   (sections: Structure & Architecture, Frontend, Backend).
 
@@ -36,8 +37,9 @@ La priorité ne s’applique qu’en cas d’information contradictoire.
 1. Notion – Delivery / sprint actif (source principale)
 2. Notion – Documentation technique
 3. Documentation Nuxt UI via MCP : mcp_servers.nuxt-ui
-4. README du repo
-5. Règles globales Windsurf
+4. Chrome DevTools via MCP : mcp_servers.chrome-devtools
+5. README du repo
+6. Règles globales Windsurf
 
 ## Responsabilites
 
@@ -73,6 +75,7 @@ La priorité ne s’applique qu’en cas d’information contradictoire.
 
 - Lire `anime-saas-front/README.md` et `anime-saas-api/README.md` pour les commandes de demarrage locales.
 - Ne pas demander comment lancer un service si la commande est dans la doc.
+- Pour les changements frontend visibles, utiliser Chrome DevTools via MCP quand une verification navigateur est pertinente: console, requetes reseau, DOM/CSS, captures, interactions et traces de performance.
 
 ## Livrables attendus
 

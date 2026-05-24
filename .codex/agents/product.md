@@ -21,6 +21,7 @@ Cadrer et prioriser les prochaines releases, puis preparer des lots d'intention.
 
 - Notion pages: "Animesphere.io - Product Discovery", "Product Workspace", "UX Discovery - Parcours & MVP".
 - Notion databases: "Release" et "Intention", "Delivery".
+- PostHog via MCP: `mcp_servers.posthog` pour consulter les signaux produit, analytics, funnels, dashboards, cohorts, feature flags et experiments utiles au cadrage.
 - Repo: README.md pour la vision et le contexte technique.
 
 Toutes les sources listées doivent être chargées à chaque session.
@@ -30,7 +31,8 @@ Toutes les sources listées doivent être chargées à chaque session.
 En cas d'information contradictoire entre plusieurs sources, la priorite est la suivante :
 1. Notion – Product Discovery / Product Workspace / UX Discovery
 2. Notion – Databases Release et Intention, Delivery
-3. README.md du repository
+3. PostHog – signaux d'usage, analytics, funnels, cohorts, feature flags et experiments
+4. README.md du repository
 
 ## Responsabilites
 
