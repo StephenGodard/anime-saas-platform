@@ -1,0 +1,38 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Background -->
+  <rect width="1024" height="1024" fill="#FFFFFF"/>
+
+  <!-- Heart -->
+  <path d="
+    M512 800
+    L200 480
+    C120 400, 120 260, 260 220
+    C360 190, 460 260, 512 320
+    C564 260, 664 190, 764 220
+    C904 260, 904 400, 824 480
+    Z
+  " fill="#F27777"/>
+
+  <!-- Play button -->
+  <path d="
+    M460 400
+    L660 512
+    L460 624
+    Z
+  " fill="#FFFFFF"/>
+
+  <!-- Sparkle (anime touch minimal) -->
+  <path d="
+    M750 260
+    L770 300
+    L810 320
+    L770 340
+    L750 380
+    L730 340
+    L690 320
+    L730 300
+    Z
+  " fill="#F27777"/>
+
+</svg>

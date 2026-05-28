@@ -14,6 +14,7 @@ Travailler avec un ensemble d'agents specialises, connectes a Notion, afin de re
 - `product` -> `.codex/agents/product.md`
 - `dev-fullstack` -> `.codex/agents/dev-fullstack.md`
 - `data-scientist` -> `.codex/agents/data-scientist.md`
+- `journaliste` -> `.codex/agents/journaliste.md`
 - `qa-analyst` -> `.codex/agents/qa-analyst.md`
 - `devops-engineer` -> `.codex/agents/devops-engineer.md`
 
@@ -23,6 +24,7 @@ Exemples :
 - "Utilise l'agent `product` (fichier `.codex/agents/product.md`) pour cadrer la prochaine release."
 - "Charge l'agent `dev-fullstack` depuis `.codex/agents/dev-fullstack.md` et reponds en tant que lui."
 - "Charge l'agent `data-scientist` depuis `.codex/agents/data-scientist.md` et reponds en tant que lui."
+- "Charge l'agent `journaliste` depuis `.codex/agents/journaliste.md` et reponds en tant que lui."
 - "Charge l'agent `qa-analyst` depuis `.codex/agents/qa-analyst.md` et reponds en tant que lui."
 - "Charge l'agent `devops-engineer` depuis `.codex/agents/devops-engineer.md` et reponds en tant que lui."
 
@@ -32,9 +34,10 @@ Exemples :
 - Referencer les pages Notion pertinentes quand c'est utile.
 - Rester concis et actionnable dans les livrables.
 - Ne pas demander comment lancer un programme si la commande est decrite dans la documentation d'un agent; se referer a ses sources de verite et executer.
-- Apres chaque intervention d'un agent executant (dev-fullstack ou data-scientist), produire une note et la transmettre a l'agent product pour arbitrage.
+- Apres chaque intervention d'un agent executant (dev-fullstack, data-scientist ou journaliste), produire une note et la transmettre a l'agent product pour arbitrage.
 - Workflow par defaut: ideation -> creation d'une release avec intentions -> brainstorming et cadrage -> validation du perimetre -> creation du tag release (ex: 0.4.0) -> user stories en base "Delivery - sprint actif".
 - Implémentation: `dev-fullstack` couvre les tags "Front-End" et "Back-End"; `data-scientist` couvre les tags "Agent IA" et "Machine Learning".
+- Editorial: `journaliste` couvre les contenus, briefs editoriaux, SEO audience et articles Markdown; il ne couvre pas l'implementation applicative.
 - Coordination: si une fonctionnalite touche a la data et au fullstack, `data-scientist` et `dev-fullstack` doivent se synchroniser.
 - Regle de commit: `[agent] type(scope): message court` (types: feat, fix, refactor, test, docs, chore).
 
