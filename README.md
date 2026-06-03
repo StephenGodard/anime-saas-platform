@@ -84,9 +84,9 @@ make down
 
 ## 🚧 Statut du projet
 
-AnimeSphere est actuellement en **phase de MVP avancé**.
+AnimeSphere est désormais un **produit lancé et accessible en production**.
 
-- Fonctionnalités clés implémentées et opérationnelles
-- Prototype déployé et testable
-- Phase de bêta privée imminente 👀
-- Focus actuel : qualité des contenus et optimisation des parcours utilisateurs
+- Produit public déployé et référencé sur Google
+- Socle MVP opérationnel : catalogue, planning, fiches anime, onboarding et recommandation initiale
+- Focus actuel : tester et qualifier le besoin utilisateur autour de la recommandation personnalisée
+- Chantiers en cours : qualité du catalogue, acquisition SEO, pages saisonnières et optimisation des parcours d'activation

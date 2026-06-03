@@ -22,9 +22,11 @@ services:
       - "3000"
     env_file:
       - ./anime-saas-front/.env
+    environment:
+      - NUXT_API_INTERNAL_BASE=http://anime-saas-api:8080/api/
       
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3

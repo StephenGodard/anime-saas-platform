@@ -25,8 +25,8 @@ Aider a creer des articles pour AnimeSphere en reliant les attentes utilisateurs
 - Notion pages: "Animesphere.io - Product Discovery", "Product Workspace", "UX Discovery - Parcours & MVP".
 - Notion databases: "Release" et "Intention", "Delivery" si le contenu est rattache a une release.
 - Google Doc: "Plan de communication build in public" de Stephen Godard (`https://docs.google.com/document/d/15r_0GVITAtD3Rcnf_Pm-aWpL7za_XurL`), surtout les episodes 20 a 35, comme reference prioritaire de posture, rythme et structure redactionnelle.
-- Repo: `anime-saas-front/content/anime-comme/you-and-i-are-polar-opposites.md` comme reference prioritaire de structure editoriale pour les articles "anime comme".
-- Repo: `anime-saas-front/content/anime-comme/oshi-no-ko.md` et `anime-saas-front/content/anime-comme/witch-hat-atelier.md` comme exemples de declinaison de cette structure sur d'autres genres.
+- Repo: `anime-saas-front/content/anime-comme/re-zero.md` comme reference prioritaire de structure editoriale pour les articles "anime comme" lies a une tendance de saison ou a une actualite forte.
+- Repo: `anime-saas-front/content/anime-comme/oshi-no-ko.md`, `anime-saas-front/content/anime-comme/witch-hat-atelier.md` et `anime-saas-front/content/anime-comme/you-and-i-are-polar-opposites.md` comme exemples harmonises de cette structure sur d'autres genres.
 - Repo: `anime-saas-front/content/` pour verifier les conventions de frontmatter et de contenu existantes.
 - Benchmarks concurrents "anime comme / apres X": Univers Otaku, Dexerto, Melty et autres resultats visibles sur la requete cible.
 - Sources audience et marche: Reddit, Nautiljon, Manga News.
@@ -48,7 +48,7 @@ En cas d'information contradictoire entre plusieurs sources, la priorite est la 
 8. Signaux communautaires: Reddit, commentaires, forums
 
 Pour le ton et la structure narrative, le Google Doc prime sur les anciens articles Markdown.
-Pour la structure d'article "anime comme", `you-and-i-are-polar-opposites.md` sert de reference actuelle.
+Pour la structure d'article "anime comme", `re-zero.md` sert de reference actuelle quand le contenu s'appuie sur une saison, une annonce ou une vague de recherche. Les articles `oshi-no-ko.md`, `witch-hat-atelier.md` et `you-and-i-are-polar-opposites.md` servent de references secondaires pour adapter cette structure a un thriller media, une fantasy contemplative et une romance.
 Pour le format de publication, le frontmatter et les contraintes Nuxt Content, le repo prime sur le Google Doc.
 Les concurrents servent a comprendre le marche, les promesses SEO et les angles couverts; ils ne doivent jamais servir de modele a recopier.
 
@@ -95,14 +95,15 @@ Les concurrents servent a comprendre le marche, les promesses SEO et les angles 
 ## Format attendu pour un article "anime comme"
 
 - Frontmatter complet: `title`, `description`, `headline`, `targetKeyword`, `sourceAnime`, `sourceAnimeSlug` si disponible, `poster`, `recommendationAngle`, `updated`, `recommendations`, `cta`.
-- Introduction courte qui part d'une tension: "tu cherches X, mais le critere evident ne suffit pas".
+- Introduction courte qui part d'une tension actuelle ou concrete: "tu viens de finir / tu suis la saison / une suite est annoncee", puis "le reflexe, c'est de chercher X. Mais ce n'est pas forcement ce qu'il te faut."
 - Image principale du `sourceAnime` apres l'introduction.
-- Cadrage qui explique le vrai critere de similarite et liste les envies possibles du lecteur.
-- Une section par envie avec la structure: "Si tu veux Y" puis "Commence par / Choisis / Pars sur / Essaie X".
+- Cadrage qui explique pourquoi cette saison, adaptation ou annonce rend le titre particulier, puis les themes renforces et le vrai critere de similarite.
+- Question pivot avant les recommandations: "la vraie question n'est pas..." puis "c'est plutot: quelle partie de cette experience tu veux retrouver ?"
+- Une section numerotee par envie avec la structure: `### 1. Titre`, image locale, puis "Si tu veux Y, commence par / choisis / pars sur / essaie X".
 - Image locale de l'anime recommande juste apres sa phrase d'introduction quand l'asset existe dans `public/seo/anime-comme/recommendations/`.
 - Pour chaque recommandation: pourquoi le choix fonctionne, nuance par rapport au titre source, cas ou il vaut mieux eviter.
 - Conclusion "Mon choix selon ton envie" avec une ligne par envie pour faciliter la decision.
-- Dernier paragraphe qui reconnecte le lecteur a AnimeSphere: choisir selon son humeur ou son envie du moment plutot qu'une liste trop large.
+- Dernier paragraphe qui rappelle le piege de chercher une copie exacte, puis reformule le choix par envie ressentie. Le CTA AnimeSphere reste dans le frontmatter, sauf si une relance produit explicite est necessaire dans le corps.
 - CTA coherent avec AnimeSphere et l'onboarding.
 
 ## Livrables attendus

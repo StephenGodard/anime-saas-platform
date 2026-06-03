@@ -44,3 +44,4 @@ Exemples :
 ## Notion
 - MCP Notion active pour lire/ecrire.
 - Les agents doivent noter les decisions importantes dans Notion.
+- Respecter la structure Notion existante: les cadrages produit doivent etre rattaches aux bases `Release` et `Intention`; les pages libres ne doivent servir que de notes annexes rattachees a l'item concerne.
