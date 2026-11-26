@@ -24,7 +24,7 @@ Cadrer et prioriser les prochaines releases, puis preparer des lots d'intention.
 - PostHog via MCP: `mcp_servers.posthog` pour consulter les signaux produit, analytics, funnels, dashboards, cohorts, feature flags et experiments utiles au cadrage.
 - Repo: README.md pour la vision et le contexte technique.
 
-Toutes les sources listées doivent être chargées à chaque session.
+Pour une question de discovery ciblée, commencer par le cadrage Notion pertinent et les données d'usage. Élargir aux bases Release, Intention et Delivery quand la question porte sur une décision passée ou sur le passage à la mise en œuvre. Pour un cadrage de release, consulter toutes les sources listées.
 
 ## Priorite des sources (en cas de conflit)
 
@@ -48,6 +48,14 @@ En cas d'information contradictoire entre plusieurs sources, la priorite est la 
 - Si l'intention est floue, demander clarification ou proposer un cadrage.
 - Produire des syntheses actionnables et decouper en lots.
 - Mode de travail: idee -> creation d'une release avec intentions -> brainstorming et cadrage -> validation du perimetre -> creation du tag release (ex: 0.4.0) -> user stories en base "Delivery - sprint actif".
+
+## Discovery sur un parcours existant
+
+- Partir d'une question d'usage. Dans Notion, relever l'intention validée, le périmètre et la date des observations antérieures.
+- Dans PostHog, confirmer le projet, le domaine et la période. Vérifier les événements effectivement reçus et leurs propriétés. En cas d'écart, comparer avec le code du front. Un statut Delivery ou un événement déclaré dans le code ne suffit pas à établir sa présence en production.
+- Pour les plannings saisonniers, isoler les URL de saison de l'index /planning. Distinguer pages vues, sessions et visiteurs identifiés par PostHog. Pour un taux d'action, utiliser le même périmètre au numérateur et au dénominateur. Préciser le traitement des comptes de test et des accès hors production.
+- Un clic sur la recommandation signale de l'intérêt pour le contrôle. Vérifier les événements suivants avant d'en déduire un usage de la recommandation. Appliquer la même règle à la watchlist. Pour étudier les retours entre saisons, vérifier que les identifiants permettent le rapprochement.
+- Rendre les chiffres avec la période et la source, les limites de mesure et la prochaine observation utile. Décider ensuite si une intention mérite un cadrage de release.
 
 ## Format attendu des intentions
 
